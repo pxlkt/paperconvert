@@ -1,0 +1,342 @@
+/* PaperConvert page layout. Every value is a PaperUI token. */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper-surface-app);
+  color: var(--paper-text);
+  font-family: var(--paper-font-family);
+}
+
+.conv-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.conv-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: var(--paper-blur-medium);
+  background: color-mix(in srgb, var(--paper-surface) 88%, transparent);
+  border-bottom: var(--paper-border-width) solid var(--paper-border);
+}
+
+.conv-topbar-inner,
+.conv-main,
+.conv-footer {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--paper-size-panel-wide);
+  margin: 0 auto;
+  padding-left: var(--paper-uigap-double);
+  padding-right: var(--paper-uigap-double);
+}
+
+.conv-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--paper-uigap);
+  height: var(--paper-size-bar);
+}
+
+.conv-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--paper-uigap-threefourths);
+  color: inherit;
+  text-decoration: none;
+}
+
+.conv-brand img {
+  width: var(--paper-control-size-medium);
+  height: var(--paper-control-size-medium);
+  border-radius: var(--paper-border-radius-half);
+}
+
+.conv-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--paper-uigap-triple);
+  padding-top: var(--paper-uigap-triple);
+  padding-bottom: var(--paper-uigap-triple);
+}
+
+/* ── hero ─────────────────────────────────────────────────────────────── */
+
+.conv-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--paper-uigap-half);
+  text-align: center;
+}
+
+.conv-h1 {
+  margin: 0;
+  text-wrap: balance;
+}
+
+.conv-lead {
+  margin: 0;
+  max-width: var(--paper-size-panel-small);
+  text-wrap: pretty;
+}
+
+.conv-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--paper-uigap-half);
+  padding: var(--paper-uigap-onefourth) var(--paper-uigap);
+  border-radius: var(--paper-border-radius-pill);
+  background: color-mix(in srgb, var(--paper-primary) 14%, transparent);
+  color: var(--paper-primary);
+  font-family: var(--paper-font-family-rounded);
+  font-weight: 800;
+  font-size: var(--paper-text-size-3);
+}
+
+.conv-promises {
+  margin-top: var(--paper-uigap-half);
+  color: var(--paper-text-subtle);
+  font-size: var(--paper-text-size-2);
+}
+
+.conv-promises span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--paper-uigap-onefourth);
+  padding: var(--paper-uigap-onefourth) var(--paper-uigap-threefourths);
+  border: var(--paper-border-width) solid var(--paper-border);
+  border-radius: var(--paper-border-radius-pill);
+  background: var(--paper-surface);
+}
+
+/* ── converter ────────────────────────────────────────────────────────── */
+
+.conv-tool {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paper-uigap);
+}
+
+.conv-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--paper-uigap);
+  border: var(--paper-thick-border-width) dashed var(--paper-border);
+  border-radius: var(--paper-border-radius);
+  background: var(--paper-surface-raised);
+  padding: var(--paper-uigap-triple) var(--paper-uigap-double);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color var(--paper-short-transition),
+    background var(--paper-short-transition);
+}
+
+.conv-drop.compact {
+  flex-direction: row;
+  justify-content: center;
+  padding: var(--paper-uigap) var(--paper-uigap-double);
+}
+
+.conv-drop:hover,
+.conv-drop.dragging {
+  border-color: var(--paper-primary);
+  background: color-mix(in srgb, var(--paper-primary) 6%, var(--paper-surface-raised));
+}
+
+.conv-drop-icon {
+  font-size: var(--paper-icon-size-huge);
+  color: var(--paper-primary);
+}
+
+.conv-drop.compact .conv-drop-icon {
+  font-size: var(--paper-icon-size-large);
+}
+
+.conv-jobs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--paper-uigap-half);
+}
+
+.conv-job-grid {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--paper-uigap);
+}
+
+.conv-job-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paper-uigap-onefourth);
+  min-width: 0;
+}
+
+.conv-job-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--paper-uigap-half);
+}
+
+.conv-job-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paper-uigap-onefourth);
+  margin-top: var(--paper-uigap-onefourth);
+}
+
+.conv-job-warning,
+.conv-job-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--paper-uigap-onefourth);
+}
+
+.conv-saved {
+  color: var(--paper-success);
+  font-weight: 700;
+}
+
+.conv-thumb {
+  width: var(--paper-control-size-large);
+  height: var(--paper-control-size-large);
+  border-radius: var(--paper-border-radius-half);
+  object-fit: cover;
+  background: var(--paper-surface-inset);
+  border: var(--paper-border-width) solid var(--paper-border);
+  box-sizing: border-box;
+}
+
+.conv-thumb-icon {
+  display: grid;
+  place-items: center;
+  color: var(--paper-primary);
+}
+
+@media (max-width: 40rem) {
+  .conv-job-grid {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .conv-job-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+.conv-color-input {
+  width: var(--paper-control-size-medium);
+  height: var(--paper-control-size-small);
+  border: var(--paper-border-width) solid var(--paper-border);
+  border-radius: var(--paper-border-radius-half);
+  background: var(--paper-surface-raised);
+  padding: var(--paper-uigap-onefourth);
+  cursor: pointer;
+}
+
+.conv-balance {
+  margin: 0;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.conv-pretty {
+  margin: 0;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ── page content ─────────────────────────────────────────────────────── */
+
+.conv-prose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paper-uigap-double);
+  max-width: var(--paper-size-panel-small);
+}
+
+.conv-prose h2,
+.conv-prose h3,
+.conv-linkgroup h2,
+.conv-linkgroup h3,
+.conv-directory h2 {
+  margin: 0 0 var(--paper-uigap-half);
+}
+
+.conv-prose p {
+  margin: 0 0 var(--paper-uigap-half);
+  line-height: 1.6;
+}
+
+.conv-linkgroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.conv-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--paper-size-field-medium), 1fr));
+  gap: var(--paper-uigap-onefourth) var(--paper-uigap);
+}
+
+.conv-links a,
+.conv-footer a {
+  color: var(--paper-primary);
+  text-decoration: none;
+  font-size: var(--paper-text-size-2);
+}
+
+.conv-links a:hover,
+.conv-footer a:hover {
+  text-decoration: underline;
+}
+
+.conv-directory {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paper-uigap-double);
+  padding-top: var(--paper-uigap-double);
+  border-top: var(--paper-border-width) solid var(--paper-border);
+}
+
+.conv-pitch img {
+  border-radius: var(--paper-border-radius);
+}
+
+.conv-footer {
+  padding-top: var(--paper-uigap-double);
+  padding-bottom: var(--paper-uigap-double);
+  border-top: var(--paper-border-width) solid var(--paper-border);
+  text-align: center;
+}
+
+/* ── prerendered page, replaced when the app starts ───────────────────── */
+
+.conv-static {
+  box-sizing: border-box;
+  max-width: var(--paper-size-panel-wide);
+  margin: 0 auto;
+  padding: var(--paper-uigap-triple) var(--paper-uigap-double);
+  line-height: 1.6;
+}
+
+.conv-static a {
+  color: var(--paper-primary);
+}
