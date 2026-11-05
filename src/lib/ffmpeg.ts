@@ -6,11 +6,13 @@
 
 import { FFmpeg, FFFSType } from "@ffmpeg/ffmpeg";
 import coreURL from "@ffmpeg/core?url";
-import wasmURL from "@ffmpeg/core/wasm?url";
 import { ffmpegFailure, mediaPlan } from "./mediaArgs";
 import { LIMITS, type ConvertOptions } from "./options";
 import { ConversionError, type Progress } from "./errors";
 import { formatBytes } from "./bytes";
+
+/** The wasm is too big for the host's per-file limit; jsDelivr serves the same version's file. */
+const wasmURL = `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${__FFMPEG_CORE_VERSION__}/dist/esm/ffmpeg-core.wasm`;
 
 let instance: FFmpeg | null = null;
 let loading: Promise<FFmpeg> | null = null;

@@ -26,7 +26,9 @@ The build runs three steps:
 
 Each page ships its real markup, title, description, canonical URL, Open Graph tags and structured data, so search engines read it without running JavaScript. The app then replaces the markup with the same page, now interactive.
 
-`dist/` is plain static files. The host has to serve `/png-to-jpg` from `png-to-jpg.html` and unknown paths from `404.html` (Cloudflare, Netlify and Vercel do this by default or with clean URLs on). `public/_headers` sets long caching on `/assets/*` for Cloudflare.
+`dist/` is plain static files. The live site runs on Cloudflare Workers static assets at convert.paperboard.dev (`wrangler.jsonc`): `bun run deploy` builds and uploads it. `/png-to-jpg` is served from `png-to-jpg.html`, unknown paths from `404.html`, and `public/_headers` sets long caching on `/assets/*`.
+
+FFmpeg's wasm (32 MB) is over Cloudflare's 25 MiB per-file limit, so it loads from jsDelivr at the installed `@ffmpeg/core` version.
 
 ## Pages
 
@@ -39,7 +41,7 @@ Each engine loads the first time a file needs it:
 | Engine | Library | Formats |
 | --- | --- | --- |
 | Image | The browser's decoders, `heic-decode`, `utif`, `gifenc` | PNG, JPG, WebP, AVIF, GIF, BMP, ICO, TIFF, SVG, HEIC |
-| Media | FFmpeg compiled to WebAssembly (about 30 MB, loaded once) | MP4, WebM, MOV, MKV, AVI, MP3, WAV, OGG, FLAC and others |
+| Media | FFmpeg compiled to WebAssembly (about 30 MB from jsDelivr, loaded once) | MP4, WebM, MOV, MKV, AVI, MP3, WAV, OGG, FLAC and others |
 | PDF | pdf.js | PDF to images and text |
 | Text | pdf-lib | Markdown, HTML, TXT, and those to PDF |
 | Sheet | SheetJS | XLSX, XLS, ODS, CSV, TSV, JSON, HTML |

@@ -1,0 +1,11 @@
+{
+  "name": "paperconvert",
+  "compatibility_date": "2026-08-01",
+  // static files only: /png-to-jpg is served from png-to-jpg.html, unknown paths from 404.html
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [{ "pattern": "convert.paperboard.dev", "custom_domain": true }]
+}

@@ -76,3 +76,5 @@ declare module "heic-decode" {
   }
   export default function decode(options: { buffer: Uint8Array | ArrayBuffer }): Promise<HeicResult>;
 }
+
+declare const __FFMPEG_CORE_VERSION__: string;
