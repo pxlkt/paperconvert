@@ -85,7 +85,7 @@ export function OptionsDialog(props: {
           <PaperButton variant="text" onClick={props.onClose}>
             Cancel
           </PaperButton>
-          <PaperEffect>
+          <PaperEffect variant="primary">
             <PaperButton variant="primary" onClick={apply}>
               Apply
             </PaperButton>

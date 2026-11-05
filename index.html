@@ -1,14 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-paperui-theme="dark" style="color-scheme: dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="PaperConvert. The blazing-fast local file converter. Convert files privately in your browser with zero uploads and zero wait." />
-    <title>PaperConvert: Local-First File Converter</title>
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#27282b" />
+    <!-- dark unless the visitor picked light, applied before the first paint -->
+    <script>
+      try {
+        if (localStorage.getItem("paperconvert-theme") === "light") {
+          document.documentElement.setAttribute("data-paperui-theme", "light");
+          document.documentElement.style.colorScheme = "light";
+        }
+      } catch {}
+    </script>
+    <!--head-->
+    <link rel="icon" type="image/png" sizes="64x64" href="/logo-64.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app--></div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

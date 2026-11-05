@@ -3,10 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Local-first file converter built with PaperUI. 100% in-browser via Web APIs and WASM.",
+  "description": "A file converter that runs in the browser, built with PaperUI. Nothing is uploaded.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && vite build -c vite.prerender.config.ts && bun scripts/prerender.ts",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
@@ -15,7 +15,7 @@
     "@ffmpeg/core": "^0.12.10",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
-    "@mileniumhq/paperui": "^0.1.0",
+    "@mileniumhq/paperui": "file:../../Paperboard/packages/paperui",
     "fflate": "^0.8.3",
     "gifenc": "^1.0.3",
     "heic-decode": "^2.1.0",
@@ -26,6 +26,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/jsdom": "^30.0.0",
+    "jsdom": "^30.1.3",
     "typescript": "~6.0.3",
     "vite": "^8.3.2",
     "vite-plugin-solid": "^2.11.14"

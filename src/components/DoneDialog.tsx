@@ -3,6 +3,7 @@ import { createMemo, Show } from "solid-js";
 import { formatBytes, savingsPercent } from "../lib/bytes";
 import { getRandomCopy } from "../lib/paperboardCopies";
 import type { BatchSummary, Job } from "../lib/queue";
+import { saveFile } from "../lib/save";
 
 /** "Your computer did that": the Paperboard pitch, shown after the first batch of a visit. */
 export function DoneDialog(props: { summary: BatchSummary | null; job: Job | null; onClose: () => void }) {
@@ -27,7 +28,7 @@ export function DoneDialog(props: { summary: BatchSummary | null; job: Job | nul
       footer={
         <PaperFlex direction="row" justify="space-between" align="center" fullWidth wrap gap="half">
           <PaperButton variant="text" href="https://paperboard.dev" target="_blank" rel="noopener">
-            Discover Paperboard <PaperIcon zeroHeight aria-hidden="true">open_in_new</PaperIcon>
+            See Paperboard <PaperIcon zeroHeight aria-hidden="true">north_east</PaperIcon>
           </PaperButton>
           <Show
             when={props.summary?.converted === 1 && props.job?.result}
@@ -38,8 +39,14 @@ export function DoneDialog(props: { summary: BatchSummary | null; job: Job | nul
             }
           >
             {(r) => (
-              <PaperEffect>
-                <PaperButton variant="success" href={r().url} download={r().fileName} onClick={props.onClose}>
+              <PaperEffect variant="success">
+                <PaperButton
+                  variant="success"
+                  onClick={() => {
+                    saveFile(r().url, r().fileName);
+                    props.onClose();
+                  }}
+                >
                   <PaperIcon zeroHeight aria-hidden="true">download</PaperIcon> Save {r().fileName}
                 </PaperButton>
               </PaperEffect>
@@ -51,14 +58,14 @@ export function DoneDialog(props: { summary: BatchSummary | null; job: Job | nul
       <Show when={props.summary && copy()}>
         <PaperFlex gap="double" fullWidth>
           <PaperFlex gap="half">
-            <PaperText as="p" size={7} weight={800} rounded class="conv-balance">
+            <PaperText as="p" preset="title" class="conv-balance">
               {copy()!.tagline}
             </PaperText>
-            <PaperText as="p" size={3} color="text-subtle" class="conv-pretty">
+            <PaperText as="p" preset="body" color="text-subtle" class="conv-pretty">
               {copy()!.text}
             </PaperText>
           </PaperFlex>
-          <PaperGrid min="var(--paper-size-field-medium)">
+          <PaperGrid min="field">
             <PaperStatTile icon="timer" tone="primary" label="Converting time" value={time()} />
             <PaperStatTile icon="cloud_off" tone="success" label="Uploaded" value="0 bytes" />
             <PaperStatTile

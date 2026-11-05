@@ -2,6 +2,7 @@ import {
   PaperButton,
   PaperCard,
   PaperEffect,
+  PaperEmptyState,
   PaperFlex,
   PaperIcon,
   PaperSectionHeader,
@@ -100,24 +101,32 @@ export function Converter(props: { queue: Queue; jobs: Job[]; intent: QueueInten
           if (!(e.target as Element).closest("button")) input?.click();
         }}
       >
-        <PaperIcon zeroHeight class="conv-drop-icon" aria-hidden="true">
-          {dragging() ? "download" : "upload_file"}
-        </PaperIcon>
-        <PaperFlex gap="onefourth" align="center">
-          <PaperText size={props.jobs.length ? 4 : 6} weight={800}>
-            {dragging() ? "Drop to add" : sourceLabel() ? `Drop ${sourceLabel()} files here` : "Drop files here"}
+        <Show
+          when={props.jobs.length}
+          fallback={
+            <PaperEmptyState
+              icon={dragging() ? "download" : "upload_file"}
+              title={dragging() ? "Drop to add" : sourceLabel() ? `Drop ${sourceLabel()} files here` : "Drop files here"}
+              description="Or paste them. Images, video, audio, PDFs, documents and spreadsheets."
+            >
+              <PaperEffect variant="primary">
+                <PaperButton variant="primary" onClick={() => input?.click()}>
+                  <PaperIcon zeroHeight aria-hidden="true">add</PaperIcon> Select files
+                </PaperButton>
+              </PaperEffect>
+            </PaperEmptyState>
+          }
+        >
+          <PaperIcon zeroHeight aria-hidden="true" class="conv-drop-icon">
+            {dragging() ? "download" : "upload_file"}
+          </PaperIcon>
+          <PaperText size={3} color="text-subtle">
+            {dragging() ? "Drop to add" : "Drop or paste more files"}
           </PaperText>
-          <Show when={!props.jobs.length}>
-            <PaperText size={2} color="text-subtle">
-              or paste them. Images, video, audio, PDFs, documents and spreadsheets.
-            </PaperText>
-          </Show>
-        </PaperFlex>
-        <PaperEffect>
-          <PaperButton variant="primary" size={props.jobs.length ? "small" : "medium"} onClick={() => input?.click()}>
-            <PaperIcon zeroHeight aria-hidden="true">add</PaperIcon> Select files
+          <PaperButton size="small" onClick={() => input?.click()}>
+            <PaperIcon zeroHeight aria-hidden="true">add</PaperIcon> Add files
           </PaperButton>
-        </PaperEffect>
+        </Show>
       </div>
 
       <Show when={rejected().length}>
@@ -170,19 +179,21 @@ export function Converter(props: { queue: Queue; jobs: Job[]; intent: QueueInten
           </For>
         </ul>
 
-        <PaperFlex direction="row" justify="flex-end" align="center" gap="half" fullWidth>
-          <Show when={busy()}>
-            <PaperText size={2} color="text-subtle" role="status">
-              Converting on this device…
-            </PaperText>
-          </Show>
-          <PaperEffect>
-            <PaperButton variant="success" disabled={convertible() === 0} onClick={() => props.queue.convert()}>
-              <PaperIcon zeroHeight aria-hidden="true">bolt</PaperIcon>
-              {convertible() > 1 ? `Convert all ${convertible()}` : "Convert"}
-            </PaperButton>
-          </PaperEffect>
-        </PaperFlex>
+        <Show when={busy() || convertible() > 0}>
+          <PaperFlex direction="row" justify="flex-end" align="center" gap="half" fullWidth>
+            <Show when={busy()}>
+              <PaperText size={2} color="text-subtle" role="status">
+                Converting on this device
+              </PaperText>
+            </Show>
+            <PaperEffect variant="success" disabled={convertible() === 0}>
+              <PaperButton variant="success" disabled={convertible() === 0} onClick={() => props.queue.convert()}>
+                <PaperIcon zeroHeight aria-hidden="true">bolt</PaperIcon>
+                {convertible() > 1 ? `Convert all ${convertible()}` : "Convert"}
+              </PaperButton>
+            </PaperEffect>
+          </PaperFlex>
+        </Show>
       </Show>
 
       <OptionsDialog

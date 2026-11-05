@@ -1,29 +1,36 @@
-import {
-  PaperButton,
-  PaperFlex,
-  PaperIcon,
-  PaperProvider,
-  PaperText,
-} from "@mileniumhq/paperui";
+import { PaperPage, PaperPageHeader, PaperProvider } from "@mileniumhq/paperui";
 import "@mileniumhq/paperui/style.css";
 import "./app.css";
-import { createMemo, createSignal, onCleanup, onMount, Show } from "solid-js";
+import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import { createStore, reconcile } from "solid-js/store";
 import { pageCopy, resolvePath, routeIntent, type Route } from "./lib/routes";
 import { getFormat } from "./lib/formats";
 import { createQueue, type BatchSummary, type Job } from "./lib/queue";
 import { convertFile } from "./lib/convert";
-import { cancelFFmpeg } from "./lib/ffmpeg";
+import { createTheme } from "./lib/theme";
 import { applyHead, NOT_FOUND_COPY } from "./head";
 import { Converter } from "./components/Converter";
 import { PageContent } from "./components/PageContent";
 import { DoneDialog } from "./components/DoneDialog";
+import { CATEGORY_ICON } from "./components/JobRow";
+import { Topbar } from "./components/Topbar";
+import { Footer } from "./components/Footer";
 
-export default function App() {
-  const [theme, setTheme] = createSignal<"dark" | "light">(
-    window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark",
-  );
-  const [route, setRoute] = createSignal<Route | null>(resolvePath(location.pathname));
+function headerIcon(route: Route | null): string {
+  switch (route?.kind) {
+    case undefined: return "search_off";
+    case "home": return "swap_horiz";
+    case "pair": return CATEGORY_ICON[getFormat(route.to).category];
+    case "format": return CATEGORY_ICON[getFormat(route.format).category];
+    case "compress": return "compress";
+    case "resize": return "photo_size_select_large";
+  }
+}
+
+/** The whole site. `path` is the page to show first; the build prerenders each one through here. */
+export default function App(props: { path: string }) {
+  const { theme, toggle } = createTheme();
+  const [route, setRoute] = createSignal<Route | null>(resolvePath(props.path));
   const copy = createMemo(() => {
     const r = route();
     return r ? pageCopy(r) : NOT_FOUND_COPY;
@@ -34,7 +41,9 @@ export default function App() {
     cancel: (engine) => {
       // only FFmpeg runs off the main thread and can be stopped mid-file;
       // the other engines finish and their result is discarded
-      if (engine === "media") cancelFFmpeg();
+      // FFmpeg is only loaded once a media file converts, so before that
+      // there is nothing to stop
+      if (engine === "media") void import("./lib/ffmpeg").then((m) => m.cancelFFmpeg());
     },
     createUrl: (blob) => URL.createObjectURL(blob),
     revokeUrl: (url) => URL.revokeObjectURL(url),
@@ -53,15 +62,26 @@ export default function App() {
     }),
   );
 
+  const scrollToHash = (hash: string) => {
+    const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
+    if (target) target.scrollIntoView();
+    else window.scrollTo({ top: 0 });
+  };
+
   const navigate = (href: string) => {
-    const next = resolvePath(new URL(href, location.href).pathname);
-    history.pushState(null, "", href);
-    setRoute(next);
-    applyHead(next, copy());
-    window.scrollTo({ top: 0 });
+    const url = new URL(href, location.href);
+    if (url.pathname !== location.pathname) {
+      history.pushState(null, "", url.pathname + url.hash);
+      setRoute(resolvePath(url.pathname));
+      applyHead(route(), copy());
+    } else if (url.hash !== location.hash) {
+      history.pushState(null, "", url.hash || url.pathname);
+    }
+    scrollToHash(url.hash);
   };
 
   onMount(() => {
+    // the prerendered head already matches; this covers the dev server and 404s
     applyHead(route(), copy());
     const onPop = () => {
       setRoute(resolvePath(location.pathname));
@@ -89,76 +109,22 @@ export default function App() {
   });
 
   return (
-    <PaperProvider theme={theme()} styleBody>
-      <div class="conv-page">
-        <header class="conv-topbar">
-          <div class="conv-topbar-inner">
-            <a href="/" data-internal class="conv-brand" aria-label="PaperConvert home">
-              <img src="/logo.png" alt="" width="32" height="32" />
-              <PaperText rounded weight={800} size={5}>
-                PaperConvert
-              </PaperText>
-            </a>
-            <PaperFlex direction="row" align="center" gap="half">
-              <PaperButton size="tiny" variant="text" href="#conversions">
-                All conversions
-              </PaperButton>
-              <PaperButton size="tiny" variant="text" href="https://paperboard.dev" target="_blank" rel="noopener">
-                Paperboard <PaperIcon zeroHeight aria-hidden="true">open_in_new</PaperIcon>
-              </PaperButton>
-              <PaperButton
-                size="tiny"
-                icon
-                variant="text"
-                onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-                aria-label={theme() === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-              >
-                {theme() === "dark" ? "light_mode" : "dark_mode"}
-              </PaperButton>
-            </PaperFlex>
-          </div>
-        </header>
+    <PaperProvider styleBody class="conv-root">
+      <Topbar theme={theme()} onToggleTheme={toggle} />
 
-        <main class="conv-main">
-          <section class="conv-hero">
-            <Show when={route()?.kind === "pair" ? (route() as Extract<Route, { kind: "pair" }>) : null}>
-              {(r) => (
-                <div class="conv-pair" aria-hidden="true">
-                  <span>{getFormat(r().from).label}</span>
-                  <PaperIcon zeroHeight>arrow_forward</PaperIcon>
-                  <span>{getFormat(r().to).label}</span>
-                </div>
-              )}
-            </Show>
-            <PaperText as="h1" preset="header" rounded class="conv-h1">
-              {copy().h1}
-            </PaperText>
-            <PaperText as="p" size={4} color="text-subtle" class="conv-lead">
-              {copy().lead}
-            </PaperText>
-            <PaperFlex direction="row" gap="half" wrap justify="center" class="conv-promises">
-              <span><PaperIcon zeroHeight aria-hidden="true">cloud_off</PaperIcon> No upload</span>
-              <span><PaperIcon zeroHeight aria-hidden="true">person_off</PaperIcon> No sign-up</span>
-              <span><PaperIcon zeroHeight aria-hidden="true">all_inclusive</PaperIcon> No daily limit</span>
-            </PaperFlex>
-          </section>
+      <main class="conv-main">
+        <PaperPage gap="double">
+        <PaperPageHeader
+          icon={headerIcon(route())}
+          title={<h1 class="conv-h1">{copy().h1}</h1>}
+          subtitle={copy().lead}
+        />
+        <Converter queue={queue} jobs={jobs} intent={intent()} />
+        <PageContent copy={copy()} />
+        </PaperPage>
+      </main>
 
-          <Converter queue={queue} jobs={jobs} intent={intent()} />
-
-          <PageContent copy={copy()} />
-        </main>
-
-        <footer class="conv-footer">
-          <PaperText size={2} color="text-subtle">
-            PaperConvert is open source under the MIT license and converts everything inside your browser. It is a side
-            project of{" "}
-            <a href="https://paperboard.dev" target="_blank" rel="noopener">
-              Paperboard
-            </a>
-            , the dashboard for apps that run on your own computer.
-          </PaperText>
-        </footer>
-      </div>
+      <Footer />
 
       <DoneDialog
         summary={summary()}

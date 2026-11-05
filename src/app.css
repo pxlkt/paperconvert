@@ -1,119 +1,72 @@
-/* PaperConvert page layout. Every value is a PaperUI token. */
+/* PaperConvert layout. Every value is a PaperUI token; the top bar and footer
+   follow paperboard.dev's chrome (apps/paperdocs/src/styles/chrome.css and
+   components/footer.module.css in the Paperboard repo). */
 
 html,
 body {
   margin: 0;
   padding: 0;
   background: var(--paper-surface-app);
-  color: var(--paper-text);
-  font-family: var(--paper-font-family);
 }
 
-.conv-page {
+.conv-root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-
-.conv-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  backdrop-filter: var(--paper-blur-medium);
-  background: color-mix(in srgb, var(--paper-surface) 88%, transparent);
-  border-bottom: var(--paper-border-width) solid var(--paper-border);
-}
-
-.conv-topbar-inner,
-.conv-main,
-.conv-footer {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: var(--paper-size-panel-wide);
-  margin: 0 auto;
-  padding-left: var(--paper-uigap-double);
-  padding-right: var(--paper-uigap-double);
-}
-
-.conv-topbar-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--paper-uigap);
-  height: var(--paper-size-bar);
-}
-
-.conv-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--paper-uigap-threefourths);
-  color: inherit;
-  text-decoration: none;
-}
-
-.conv-brand img {
-  width: var(--paper-control-size-medium);
-  height: var(--paper-control-size-medium);
-  border-radius: var(--paper-border-radius-half);
 }
 
 .conv-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--paper-uigap-triple);
-  padding-top: var(--paper-uigap-triple);
-  padding-bottom: var(--paper-uigap-triple);
 }
 
-/* ── hero ─────────────────────────────────────────────────────────────── */
+/* ── top bar ──────────────────────────────────────────────────────────── */
 
-.conv-hero {
+.conv-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--paper-uigap-half);
-  text-align: center;
+  gap: var(--paper-uigap-double);
+  padding: var(--paper-uigap-half) var(--paper-uigap);
+  background-color: var(--paper-surface-raised);
+  border-bottom: var(--paper-border-width) solid var(--paper-border);
 }
 
+.conv-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--paper-uigap-threefourths);
+  flex-shrink: 0;
+  color: var(--paper-text);
+  text-decoration: none;
+}
+
+.conv-topbar-links {
+  display: flex;
+  gap: var(--paper-uigap-half);
+}
+
+@media (max-width: 720px) {
+  .conv-topbar {
+    gap: var(--paper-uigap-half);
+  }
+
+  .conv-topbar-links {
+    display: none;
+  }
+}
+
+/* ── page header ──────────────────────────────────────────────────────── */
+
+/* the h1 sits in PaperPageHeader's title and takes its preset */
 .conv-h1 {
   margin: 0;
+  font: inherit;
+  color: inherit;
   text-wrap: balance;
-}
-
-.conv-lead {
-  margin: 0;
-  max-width: var(--paper-size-panel-small);
-  text-wrap: pretty;
-}
-
-.conv-pair {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--paper-uigap-half);
-  padding: var(--paper-uigap-onefourth) var(--paper-uigap);
-  border-radius: var(--paper-border-radius-pill);
-  background: color-mix(in srgb, var(--paper-primary) 14%, transparent);
-  color: var(--paper-primary);
-  font-family: var(--paper-font-family-rounded);
-  font-weight: 800;
-  font-size: var(--paper-text-size-3);
-}
-
-.conv-promises {
-  margin-top: var(--paper-uigap-half);
-  color: var(--paper-text-subtle);
-  font-size: var(--paper-text-size-2);
-}
-
-.conv-promises span {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--paper-uigap-onefourth);
-  padding: var(--paper-uigap-onefourth) var(--paper-uigap-threefourths);
-  border: var(--paper-border-width) solid var(--paper-border);
-  border-radius: var(--paper-border-radius-pill);
-  background: var(--paper-surface);
 }
 
 /* ── converter ────────────────────────────────────────────────────────── */
@@ -124,16 +77,20 @@ body {
   gap: var(--paper-uigap);
 }
 
+/* the drop target: an inset well with the strong dashed border the design
+   language gives drop targets */
 .conv-drop {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--paper-uigap);
-  border: var(--paper-thick-border-width) dashed var(--paper-border);
+  min-height: var(--paper-size-panel-height-small);
+  box-sizing: border-box;
+  padding: var(--paper-uigap-double);
+  border: var(--paper-thick-border-width) dashed var(--paper-border-strong);
   border-radius: var(--paper-border-radius);
-  background: var(--paper-surface-raised);
-  padding: var(--paper-uigap-triple) var(--paper-uigap-double);
-  text-align: center;
+  background: var(--paper-surface-inset);
   cursor: pointer;
   transition:
     border-color var(--paper-short-transition),
@@ -142,23 +99,21 @@ body {
 
 .conv-drop.compact {
   flex-direction: row;
-  justify-content: center;
-  padding: var(--paper-uigap) var(--paper-uigap-double);
+  min-height: 0;
+  padding: var(--paper-uigap-threefourths) var(--paper-uigap);
 }
 
 .conv-drop:hover,
 .conv-drop.dragging {
   border-color: var(--paper-primary);
-  background: color-mix(in srgb, var(--paper-primary) 6%, var(--paper-surface-raised));
+}
+
+.conv-drop.dragging {
+  background: color-mix(in srgb, var(--paper-primary) 8%, var(--paper-surface-inset));
 }
 
 .conv-drop-icon {
-  font-size: var(--paper-icon-size-huge);
-  color: var(--paper-primary);
-}
-
-.conv-drop.compact .conv-drop-icon {
-  font-size: var(--paper-icon-size-large);
+  color: var(--paper-text-subtle);
 }
 
 .conv-jobs {
@@ -224,10 +179,10 @@ body {
 .conv-thumb-icon {
   display: grid;
   place-items: center;
-  color: var(--paper-primary);
+  color: var(--paper-text-subtle);
 }
 
-@media (max-width: 40rem) {
+@media (max-width: 640px) {
   .conv-job-grid {
     grid-template-columns: auto minmax(0, 1fr);
   }
@@ -250,93 +205,211 @@ body {
 
 .conv-balance {
   margin: 0;
-  line-height: 1.25;
   text-wrap: balance;
 }
 
 .conv-pretty {
   margin: 0;
-  line-height: 1.6;
   text-wrap: pretty;
 }
 
 /* ── page content ─────────────────────────────────────────────────────── */
 
-.conv-prose {
+.conv-section {
   display: flex;
   flex-direction: column;
-  gap: var(--paper-uigap-double);
-  max-width: var(--paper-size-panel-small);
+  gap: var(--paper-uigap-half);
+  scroll-margin-top: var(--paper-size-bar);
 }
 
-.conv-prose h2,
-.conv-prose h3,
-.conv-linkgroup h2,
-.conv-linkgroup h3,
-.conv-directory h2 {
-  margin: 0 0 var(--paper-uigap-half);
+.conv-section :is(h2, h3, p, ol, ul) {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
-.conv-prose p {
-  margin: 0 0 var(--paper-uigap-half);
-  line-height: 1.6;
+/* prose keeps a reading measure; link lists and the directory use the page */
+.conv-reading {
+  max-width: var(--paper-size-panel-large);
 }
 
-.conv-linkgroup {
+.conv-faq {
   display: flex;
   flex-direction: column;
+  gap: var(--paper-uigap-onefourth);
+  margin-top: var(--paper-uigap-half);
 }
 
 .conv-links {
   list-style: none;
-  margin: 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(var(--paper-size-field-medium), 1fr));
-  gap: var(--paper-uigap-onefourth) var(--paper-uigap);
+  gap: var(--paper-uigap-half) var(--paper-uigap);
 }
 
 .conv-links a,
-.conv-footer a {
-  color: var(--paper-primary);
+.conv-directory a {
+  color: var(--paper-text-subtle);
   text-decoration: none;
   font-size: var(--paper-text-size-2);
 }
 
 .conv-links a:hover,
-.conv-footer a:hover {
+.conv-directory a:hover {
+  color: var(--paper-primary);
   text-decoration: underline;
 }
 
-.conv-directory {
+.conv-pitch {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
   gap: var(--paper-uigap-double);
-  padding-top: var(--paper-uigap-double);
-  border-top: var(--paper-border-width) solid var(--paper-border);
 }
 
 .conv-pitch img {
-  border-radius: var(--paper-border-radius);
+  flex-shrink: 0;
+  border-radius: var(--paper-border-radius-half);
 }
+
+/* the directory: one row per source format */
+.conv-directory-row {
+  display: grid;
+  grid-template-columns: var(--paper-size-field-small) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--paper-uigap);
+  padding: var(--paper-uigap-half) var(--paper-uigap);
+  border-top: var(--paper-border-width) solid var(--paper-border-subtle);
+}
+
+.conv-directory-row:first-child {
+  border-top: none;
+}
+
+.conv-directory .conv-directory-source {
+  color: var(--paper-text);
+  font-weight: 700;
+  font-size: var(--paper-text-size-3);
+}
+
+.conv-directory-targets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--paper-uigap-onefourth) var(--paper-uigap);
+}
+
+/* ── footer ───────────────────────────────────────────────────────────── */
 
 .conv-footer {
-  padding-top: var(--paper-uigap-double);
-  padding-bottom: var(--paper-uigap-double);
+  background-color: var(--paper-surface-raised);
   border-top: var(--paper-border-width) solid var(--paper-border);
-  text-align: center;
 }
 
-/* ── prerendered page, replaced when the app starts ───────────────────── */
-
-.conv-static {
+.conv-footer-inner,
+.conv-footer-bottom {
   box-sizing: border-box;
-  max-width: var(--paper-size-panel-wide);
+  max-width: var(--paper-page-width);
   margin: 0 auto;
-  padding: var(--paper-uigap-triple) var(--paper-uigap-double);
-  line-height: 1.6;
+  padding-left: var(--paper-uigap-double);
+  padding-right: var(--paper-uigap-double);
 }
 
-.conv-static a {
-  color: var(--paper-primary);
+.conv-footer-inner {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--paper-uigap-double);
+  padding-top: var(--paper-uigap-quadruple);
+  padding-bottom: var(--paper-uigap-double);
+}
+
+.conv-footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paper-uigap-half);
+  min-width: 0;
+}
+
+.conv-footer-column h2 {
+  margin: 0 0 var(--paper-uigap-onefourth);
+}
+
+.conv-footer-column a {
+  width: fit-content;
+  color: var(--paper-text-subtle);
+  font-size: var(--paper-text-size-2);
+  text-decoration: none;
+}
+
+.conv-footer-column a:hover,
+.conv-footer-social a:hover {
+  color: var(--paper-text);
+}
+
+.conv-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--paper-uigap-half);
+  padding-top: var(--paper-uigap);
+  padding-bottom: var(--paper-uigap-double);
+}
+
+.conv-footer-social {
+  display: flex;
+  align-items: center;
+  gap: var(--paper-uigap-threefourths);
+}
+
+.conv-footer-social a {
+  display: inline-flex;
+  align-items: center;
+  color: var(--paper-text-subtle);
+}
+
+/* icon viewBoxes are trimmed to each glyph, so one height lines them up */
+.conv-footer-social svg {
+  display: block;
+  height: var(--paper-text-size-2);
+  width: auto;
+}
+
+.conv-footer-separator {
+  width: var(--paper-border-width);
+  height: var(--paper-text-size-2);
+  background: var(--paper-border);
+}
+
+/* the Milenium wordmark is a white SVG used as a mask, so it takes the text color */
+.conv-milenium {
+  display: inline-block;
+  height: var(--paper-text-size-2);
+  aspect-ratio: 444 / 86;
+  background-color: currentColor;
+  mask: url("/milenium.svg") center / contain no-repeat;
+}
+
+@media (max-width: 700px) {
+  .conv-footer-inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-top: var(--paper-uigap-triple);
+  }
+}
+
+@media (max-width: 480px) {
+  .conv-footer-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.conv-pitch :is(h2, p) {
+  margin: 0;
+}
+
+.conv-directory-group {
+  margin-top: var(--paper-uigap);
 }

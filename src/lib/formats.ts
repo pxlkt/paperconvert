@@ -23,7 +23,7 @@ export const FORMATS: FormatInfo[] = [
   { id: "png", label: "PNG", mime: "image/png", extensions: ["png", "apng"], category: "image", about: "PNG is a lossless image format with transparency, the usual choice for screenshots, logos and graphics." },
   { id: "jpg", label: "JPG", mime: "image/jpeg", extensions: ["jpg", "jpeg", "jfif", "jpe"], aliases: ["jpeg"], category: "image", about: "JPG (JPEG) is the lossy photo format almost every camera, phone and website understands." },
   { id: "webp", label: "WebP", mime: "image/webp", extensions: ["webp"], category: "image", about: "WebP is Google's web image format: smaller than JPG and PNG, with transparency and animation." },
-  { id: "avif", label: "AVIF", mime: "image/avif", extensions: ["avif"], category: "image", about: "AVIF stores images with the AV1 codec, giving very small files for photos." },
+  { id: "avif", label: "AVIF", mime: "image/avif", extensions: ["avif"], category: "image", about: "AVIF stores images with the AV1 codec, which makes photo files smaller than JPG or WebP at the same quality." },
   { id: "gif", label: "GIF", mime: "image/gif", extensions: ["gif"], category: "image", about: "GIF is the 256-colour image format behind animated reactions and memes." },
   { id: "bmp", label: "BMP", mime: "image/bmp", extensions: ["bmp", "dib"], category: "image", about: "BMP is the uncompressed Windows bitmap format, read by almost any image tool." },
   { id: "ico", label: "ICO", mime: "image/x-icon", extensions: ["ico"], category: "image", about: "ICO is the Windows icon and favicon container. PaperConvert writes 16, 32, 48, 64, 128 and 256 px sizes." },

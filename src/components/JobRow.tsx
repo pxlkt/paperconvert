@@ -14,6 +14,7 @@ import { getFormat, type FormatCategory } from "../lib/formats";
 import { optionGroups } from "../lib/options";
 import { formatBytes, savingsPercent } from "../lib/bytes";
 import type { Job } from "../lib/queue";
+import { saveFile } from "../lib/save";
 
 export const CATEGORY_ICON: Record<FormatCategory, string> = {
   image: "image",
@@ -77,7 +78,7 @@ export function JobRow(props: {
                   {" → "}
                   {formatBytes(r().bytes)}
                   <Show when={saved() > 0}>
-                    <span class="conv-saved"> (−{saved()}%)</span>
+                    <span class="conv-saved"> ({saved()}% smaller)</span>
                   </Show>
                   <Show when={r().width && r().height}>
                     {" · "}
@@ -167,7 +168,7 @@ export function JobRow(props: {
             }
           >
             {(r) => (
-              <PaperButton variant="success" size="small" href={r().url} download={r().fileName}>
+              <PaperButton variant="success" size="small" onClick={() => saveFile(r().url, r().fileName)}>
                 <PaperIcon zeroHeight aria-hidden="true">download</PaperIcon> Save
               </PaperButton>
             )}

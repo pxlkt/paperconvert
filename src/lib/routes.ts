@@ -96,7 +96,8 @@ export interface PageCopy {
   description: string;
   h1: string;
   lead: string;
-  sections: { heading: string; body: string[] }[];
+  /** prose sections; `steps` renders as a numbered list after the body */
+  sections: { heading: string; body: string[]; steps?: string[] }[];
   faq: { q: string; a: string }[];
   related: LinkGroup[];
 }
@@ -165,10 +166,11 @@ function pairCopy(route: Extract<Route, { kind: "pair" }>): PageCopy {
       ...(notes.length ? [{ heading: `Before you convert ${A} to ${B}`, body: notes }] : []),
       {
         heading: `How to convert ${A} to ${B}`,
-        body: [
-          `1. Drop your ${A} files on the box above, paste them, or click Select files.`,
-          `2. Check the target says ${B}. The gear button has quality and size settings.`,
-          `3. Click Convert, then Save. Convert all handles a whole batch.`,
+        body: [],
+        steps: [
+          `Drop your ${A} files on the box above, paste them, or click Select files.`,
+          `Check that each file says ${B}. The settings button next to it has quality and size options.`,
+          `Click Convert, then Save. Convert all runs a whole batch in order.`,
         ],
       },
       { heading: `${f.label} and ${t.label}`, body: [f.about, t.about] },
@@ -221,6 +223,13 @@ function clip(s: string): string {
   return s.length <= 160 ? s : `${s.slice(0, 157).replace(/\s+\S*$/, "")}...`;
 }
 
+/** "PNG, WebP and GIF", or the first four and a count of the rest. */
+function listTargets(labels: string[]): string {
+  if (labels.length <= 1) return labels[0] ?? "other formats";
+  if (labels.length <= 4) return `${labels.slice(0, -1).join(", ")} and ${labels.at(-1)}`;
+  return `${labels.slice(0, 4).join(", ")} and ${labels.length - 4} other formats`;
+}
+
 function formatCopy(route: Extract<Route, { kind: "format" }>): PageCopy {
   const A = labelOf(route.name);
   const f = getFormat(route.format);
@@ -228,7 +237,7 @@ function formatCopy(route: Extract<Route, { kind: "format" }>): PageCopy {
   const to = CONVERSIONS.filter((c) => c.to === f.id && c.from !== f.id);
   return {
     title: `${A} Converter: convert ${A} files free, no upload | ${SITE_NAME}`,
-    description: clip(`Convert ${A} files to ${from.slice(0, 4).map((c) => getFormat(c.to).label).join(", ")} and more, in your browser. Nothing is uploaded. Free, no sign-up.`),
+    description: clip(`Convert ${A} files to ${listTargets(from.map((c) => getFormat(c.to).label))} in your browser. Nothing is uploaded. Free, no sign-up.`),
     h1: `${A} converter`,
     lead: `Drop ${A} files below, pick a format, and convert them on this device. Nothing is uploaded.`,
     sections: [{ heading: `About ${A}`, body: [f.about] }],
