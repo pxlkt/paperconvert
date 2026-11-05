@@ -1,6 +1,6 @@
 # PaperConvert
 
-A file converter that runs in the browser, built with [PaperUI](https://paperboard.dev/docs/paperui/). Images, video, audio, PDFs, documents and spreadsheets are converted inside the tab. Nothing is uploaded. It lives at [convert.paperboard.dev](https://convert.paperboard.dev) as a small taste of [Paperboard](https://paperboard.dev).
+This is an SEO maxxed locally ran file converter. It runs fast sometimes, in the browser. There are better options but this works well. Here's yap from my agent:
 
 ## Run it
 
