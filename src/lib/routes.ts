@@ -163,7 +163,6 @@ function pairCopy(route: Extract<Route, { kind: "pair" }>): PageCopy {
     h1: `${A} to ${B} converter`,
     lead: `Drop ${A} files below to turn them into ${B}. They are converted on this device and never uploaded.`,
     sections: [
-      ...(notes.length ? [{ heading: `Before you convert ${A} to ${B}`, body: notes }] : []),
       {
         heading: `How to convert ${A} to ${B}`,
         body: [],
@@ -173,6 +172,7 @@ function pairCopy(route: Extract<Route, { kind: "pair" }>): PageCopy {
           `Click Convert, then Save. Convert all runs a whole batch in order.`,
         ],
       },
+      ...(notes.length ? [{ heading: `Before you convert ${A} to ${B}`, body: notes }] : []),
       { heading: `${f.label} and ${t.label}`, body: [f.about, t.about] },
       { heading: "How it works", body: [ENGINE_NOTE[engine]] },
     ],

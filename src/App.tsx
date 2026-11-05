@@ -120,7 +120,7 @@ export default function App(props: { path: string }) {
           subtitle={copy().lead}
         />
         <Converter queue={queue} jobs={jobs} intent={intent()} />
-        <PageContent copy={copy()} />
+        <PageContent copy={copy()} directory={route()?.kind === "home" || route() === null} />
         </PaperPage>
       </main>
 

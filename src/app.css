@@ -85,7 +85,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: var(--paper-uigap);
-  min-height: var(--paper-size-panel-height-small);
+  min-height: var(--paper-size-field-wide);
   box-sizing: border-box;
   padding: var(--paper-uigap-double);
   border: var(--paper-thick-border-width) dashed var(--paper-border-strong);
@@ -222,21 +222,70 @@ body {
   scroll-margin-top: var(--paper-size-bar);
 }
 
-.conv-section :is(h2, h3, p, ol, ul) {
+/* PaperText renders real h2/p/ol for search engines; spacing comes from the
+   flex gaps, so the browser's default margins go */
+.conv-main :is(h2, h3, p, ol, ul) {
   margin-top: 0;
   margin-bottom: 0;
 }
 
-/* prose keeps a reading measure; link lists and the directory use the page */
-.conv-reading {
-  max-width: var(--paper-size-panel-large);
+/* the page's copy as a row of cards: two across on a desktop, one on a phone */
+.conv-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--paper-size-panel-small)), 1fr));
+  gap: var(--paper-uigap);
 }
 
-.conv-faq {
+/* closed rows that open in place (FAQ, directory); the content stays in the markup */
+.conv-disclosure details {
+  border-top: var(--paper-border-width) solid var(--paper-border-subtle);
+}
+
+.conv-disclosure details:first-child {
+  border-top: none;
+}
+
+.conv-disclosure summary {
   display: flex;
-  flex-direction: column;
-  gap: var(--paper-uigap-onefourth);
-  margin-top: var(--paper-uigap-half);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--paper-uigap);
+  padding: var(--paper-uigap) var(--paper-uigap-sixfourths);
+  cursor: pointer;
+  list-style: none;
+}
+
+.conv-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.conv-disclosure summary:hover {
+  background: color-mix(in srgb, var(--paper-contrast) 4%, transparent);
+}
+
+.conv-disclosure summary:focus-visible {
+  outline: var(--paper-focus-ring);
+  outline-offset: calc(-1 * var(--paper-focus-offset));
+}
+
+.conv-faq p {
+  padding: 0 var(--paper-uigap-sixfourths) var(--paper-uigap);
+}
+
+.conv-disclosure-chevron {
+  flex-shrink: 0;
+  color: var(--paper-text-subtle);
+  transition: transform var(--paper-short-transition);
+}
+
+.conv-disclosure details[open] .conv-disclosure-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conv-disclosure-chevron {
+    transition: none;
+  }
 }
 
 .conv-links {
@@ -248,14 +297,14 @@ body {
 }
 
 .conv-links a,
-.conv-directory a {
+.conv-disclosure .conv-directory-row a {
   color: var(--paper-text-subtle);
   text-decoration: none;
   font-size: var(--paper-text-size-2);
 }
 
 .conv-links a:hover,
-.conv-directory a:hover {
+.conv-disclosure .conv-directory-row a:hover {
   color: var(--paper-primary);
   text-decoration: underline;
 }
@@ -266,6 +315,11 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: var(--paper-uigap-double);
+}
+
+/* the copy takes the free width, and drops under the logo on a phone */
+.conv-pitch > :nth-child(2) {
+  flex: 1 1 var(--paper-size-field-wide);
 }
 
 .conv-pitch img {
@@ -279,15 +333,11 @@ body {
   grid-template-columns: var(--paper-size-field-small) minmax(0, 1fr);
   align-items: baseline;
   gap: var(--paper-uigap);
-  padding: var(--paper-uigap-half) var(--paper-uigap);
+  padding: var(--paper-uigap-half) var(--paper-uigap-sixfourths);
   border-top: var(--paper-border-width) solid var(--paper-border-subtle);
 }
 
-.conv-directory-row:first-child {
-  border-top: none;
-}
-
-.conv-directory .conv-directory-source {
+.conv-disclosure .conv-directory-row .conv-directory-source {
   color: var(--paper-text);
   font-weight: 700;
   font-size: var(--paper-text-size-3);
@@ -404,12 +454,4 @@ body {
   .conv-footer-inner {
     grid-template-columns: minmax(0, 1fr);
   }
-}
-
-.conv-pitch :is(h2, p) {
-  margin: 0;
-}
-
-.conv-directory-group {
-  margin-top: var(--paper-uigap);
 }
