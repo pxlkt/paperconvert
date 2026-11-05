@@ -15,5 +15,8 @@ export default defineConfig({
   },
   build: {
     target: "esnext",
+    // the HEIC decoder (libheif compiled to JS) is a 2 MB chunk on its own;
+    // it only loads when someone converts a HEIC photo
+    chunkSizeWarningLimit: 2100,
   },
 });

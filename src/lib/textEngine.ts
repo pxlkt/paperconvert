@@ -5,13 +5,9 @@
 
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import { ConversionError } from "./errors";
+import { escapeHtml } from "./html";
 
-const HTML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-
-/** Text for an HTML body or a quoted attribute. */
-export function escapeHtml(text: string): string {
-  return text.replace(/[&<>"']/g, (c) => HTML_ESCAPES[c]!);
-}
+export { escapeHtml };
 
 // links and images may point at the web, mail, or a relative path; a
 // javascript:/data: target would run when the converted file is opened

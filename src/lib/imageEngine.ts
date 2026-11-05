@@ -5,10 +5,8 @@
 // for TIFF, pdf-lib for PDF. Every encoder's output type is checked: a canvas
 // that cannot write a format returns PNG instead of failing.
 
-import decodeHeic from "heic-decode";
 import UTIF from "utif";
 import { GIFEncoder, applyPalette, quantize } from "gifenc";
-import { PDFDocument } from "pdf-lib";
 import { encodeBmp, encodeIco, hasAlpha, icoSizesFor } from "./encoders";
 import { ConversionError, type Progress } from "./errors";
 import { DEFAULT_OPTIONS, LIMITS, computeOutputSize, type ConvertOptions } from "./options";
@@ -67,6 +65,8 @@ export async function decodeImage(file: Blob, from: string): Promise<DecodedImag
     throw new ConversionError(`This image is ${formatBytes(file.size)}. PaperConvert reads images up to ${formatBytes(LIMITS.maxImageBytes)}.`);
   }
   if (from === "heic") {
+    // libheif is most of this engine's weight, so only HEIC files fetch it
+    const { default: decodeHeic } = await import("heic-decode");
     const { width, height, data } = await decodeHeic({ buffer: new Uint8Array(await file.arrayBuffer()) });
     const canvas = canvasFromRgba(data, width, height);
     return { source: canvas, width, height, close: () => undefined };
@@ -179,6 +179,7 @@ async function encodeIcon(img: DecodedImage): Promise<Blob> {
 }
 
 async function encodePdf(canvas: HTMLCanvasElement): Promise<Blob> {
+  const { PDFDocument } = await import("pdf-lib");
   const doc = await PDFDocument.create();
   // photos embed as JPEG; anything with transparency keeps it as PNG
   const transparent = hasAlpha(pixels(canvas));

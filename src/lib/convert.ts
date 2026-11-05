@@ -7,11 +7,6 @@ import { ConversionError, type Progress } from "./errors";
 import { getFormat, mimeFor } from "./formats";
 import { sanitizeOptions, type ConvertOptions } from "./options";
 import { outputFileName } from "./bytes";
-import { convertImage } from "./imageEngine";
-import { runMedia } from "./ffmpeg";
-import { convertPdf } from "./pdfEngine";
-import { convertText } from "./textEngine";
-import { convertSheet } from "./sheetEngine";
 
 export interface ConvertResult {
   blob: Blob;
@@ -37,22 +32,34 @@ export async function convertFile(
   const started = performance.now();
   let out: Omit<ConvertResult, "elapsedMs" | "fileName"> & { fileName?: string };
 
+  // each engine loads the first time a file needs it, so the page itself
+  // ships without pdf.js, SheetJS, pdf-lib or FFmpeg
   switch (conversion.engine) {
-    case "image":
+    case "image": {
+      const { convertImage } = await loadEngine(() => import("./imageEngine"));
       out = { ...(await convertImage(file, from, to, opts, progress)), warnings: [] };
       break;
-    case "media":
+    }
+    case "media": {
+      const { runMedia } = await loadEngine(() => import("./ffmpeg"));
       out = { blob: await runMedia(file, from, to, opts, progress), warnings: [] };
       break;
-    case "pdf":
+    }
+    case "pdf": {
+      const { convertPdf } = await loadEngine(() => import("./pdfEngine"));
       out = await convertPdf(file, to, opts, progress);
       break;
-    case "text":
+    }
+    case "text": {
+      const { convertText } = await loadEngine(() => import("./textEngine"));
       out = await convertText(file, from, to);
       break;
-    case "sheet":
+    }
+    case "sheet": {
+      const { convertSheet } = await loadEngine(() => import("./sheetEngine"));
       out = await convertSheet(file, from, to);
       break;
+    }
   }
   const blob = out.blob.type ? out.blob : new Blob([out.blob], { type: mimeFor(to) });
   return {
@@ -61,4 +68,15 @@ export async function convertFile(
     fileName: out.fileName ?? outputFileName(file.name, to),
     elapsedMs: performance.now() - started,
   };
+}
+
+/** A failed engine download (offline, a new deploy) is an error on the file's row, not a silent stall. */
+async function loadEngine<T>(load: () => Promise<T>): Promise<T> {
+  try {
+    return await load();
+  } catch (err) {
+    throw new ConversionError(
+      `The converter for this file failed to load. Check your connection and reload the page. (${err instanceof Error ? err.message : String(err)})`,
+    );
+  }
 }
